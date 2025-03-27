@@ -8,7 +8,7 @@ cd konflux-ui
 
 set -x
 
-export COMPONENT NODE_DEBUG BUILD_NAME SL_fileExtensions BUILD_DIR_PATH BABYLON_PLUGINS
+export COMPONENT NODE_DEBUG BUILD_NAME SL_fileExtensions BUILD_DIR_PATH BABYLON_PLUGINS BSID
 
 # BUILD_NAME="konflux-ui-$(date -u +"%s")"
 # TODO: update
@@ -24,6 +24,8 @@ podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/kon
     $NODEJS_AGENT_IMAGE \
     /bin/bash -cx "whoami && slnodejs prConfig --appName ${COMPONENT} --targetBranch ${TARGET_BRANCH} --repositoryUrl ${FORKED_REPO_URL} --latestCommit ${HEAD_SHA} --pullRequestNumber ${PR_NUMBER} --token ${SEALIGHTS_TOKEN}"
     # repositoryUrl ?
+
+BSID=$(< buildSessionId)
 
 ./connect_to_local_konflux.sh
 
@@ -86,7 +88,7 @@ COMMON_SETUP="-v $PWD/artifacts:/tmp/artifacts:Z,U \
     -e CYPRESS_PASSWORD=${CYPRESS_PASSWORD} \
     -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN} \
     -e CYPRESS_SL_TOKEN=${SEALIGHTS_TOKEN} \
-    -e CYPRESS_SL_BUILD_SESSION_ID=$(< buildSessionId) \
+    -e CYPRESS_SL_BUILD_SESSION_ID=${BSID} \
     -e CYPRESS_SL_TEST_STAGE=konflux-ui-e2e"
 
 TEST_RUN=0
