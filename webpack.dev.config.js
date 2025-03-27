@@ -9,10 +9,13 @@ const DEV_SERVER_PORT = 8080;
 
 export default merge(commonConfig, {
   mode: 'development',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   devServer: {
     historyApiFallback: true,
     port: DEV_SERVER_PORT,
+    devMiddleware: {
+      writeToDisk: true,
+    },
     hot: true,
     server: 'https',
     proxy: [
