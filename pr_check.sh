@@ -46,9 +46,10 @@ podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/kon
 
 cp -r ${SL_BUILD_DIR_PATH}/* ${BUILD_DIR_PATH}
 
-podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-    $NODEJS_AGENT_IMAGE \
-    /bin/bash -cx "slnodejs start --teststage konflux-ui-e2e --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
+# podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
+#     $NODEJS_AGENT_IMAGE \
+#     /bin/bash -cx "slnodejs start --teststage konflux-ui-e2e --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
+
 
 
 # -------------------------------------
@@ -83,7 +84,10 @@ COMMON_SETUP="-v $PWD/artifacts:/tmp/artifacts:Z,U \
     -e CYPRESS_KONFLUX_BASE_URL=https://localhost:8080 \
     -e CYPRESS_USERNAME=${CYPRESS_USERNAME} \
     -e CYPRESS_PASSWORD=${CYPRESS_PASSWORD} \
-    -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN}"
+    -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN} \
+    -e CYPRESS_SL_TOKEN=${SEALIGHTS_TOKEN} \
+    -e CYPRESS_SL_BUILD_SESSION_ID=$(< buildSessionId) \
+    -e CYPRESS_SL_TEST_STAGE=konflux-ui-e2e"
 
 TEST_RUN=0
 
@@ -93,9 +97,9 @@ podman run --network host ${COMMON_SETUP} ${TEST_IMAGE} || TEST_RUN=1
 kill $YARN_PID
 cp yarn_start_logfile $PWD/artifacts
 
-podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-    $NODEJS_AGENT_IMAGE \
-    /bin/bash -cx "slnodejs end --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
+# podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
+#     $NODEJS_AGENT_IMAGE \
+#     /bin/bash -cx "slnodejs end --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
 
 echo "Exiting pr_check.sh with code $TEST_RUN"
 

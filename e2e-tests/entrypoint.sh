@@ -25,4 +25,5 @@ if [ -d "/e2e/cypress" ]; then
 else
   cp -a /tmp/e2e/cypress/* /tmp/artifacts
 fi
+
 exit $EXIT_CODE
