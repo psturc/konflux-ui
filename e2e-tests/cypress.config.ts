@@ -1,4 +1,5 @@
 import { defineConfig } from 'cypress';
+const { registerSealightsTasks } = require('sealights-cypress-plugin');
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 const { beforeRunHook, afterRunHook } = require('cypress-mochawesome-reporter/lib');
@@ -47,6 +48,7 @@ export default defineConfig({
         ? 'tests/*-private-git-*' // TODO: remove once https://issues.redhat.com/browse/RHTAPBUGS-111 is resolved
         : 'tests/{advanced-happy-path*,private-basic*,*-private-git-*}',
     setupNodeEvents(on, config) {
+      registerSealightsTasks(on, config);
       require('cypress-mochawesome-reporter/plugin')(on);
 
       const logOptions = {
