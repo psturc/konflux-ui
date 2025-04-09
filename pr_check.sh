@@ -3,6 +3,8 @@
 export NODEJS_AGENT_IMAGE=quay.io/konflux-ci/tekton-integration-catalog/sealights-nodejs:latest
 
 build_ui_image() {
+    set -euo pipefail
+    
     echo "Building UI from commit sha ${HEAD_SHA}"
     
     export IMAGE_NAME=localhost/test/test
@@ -16,7 +18,8 @@ build_ui_image() {
 
     cd konflux-ui || exit 1
 
-    export COMPONENT=konflux-ui
+    # TODO: change to konflux-ui
+    export COMPONENT=nodejs-test
     export AGENT_VERSION
 
     AGENT_VERSION=$(podman run $NODEJS_AGENT_IMAGE /bin/sh -c 'echo ${AGENT_VERSION}')
