@@ -15,3 +15,13 @@ jobs:
         uses: ./.github/actions/pr-check
         with:
           job-type: 'periodic'
+          hac-test-gh-token: ${{ secrets.HAC_TEST_GH_TOKEN }}
+          sealights-token: ${{ secrets.SEALIGHTS_TOKEN }}
+          gh-app-id: ${{ secrets.GH_APP_ID }}
+          gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          gh-app-webhook-secret: ${{ secrets.GH_APP_WEBHOOK_SECRET }}
+          quay-test-org: ${{ secrets.QUAY_TEST_ORG }}
+          quay-token-test: ${{ secrets.QUAY_TOKEN_TEST }}
+          smee-url: ${{ secrets.SMEE_URL }}
+          cypress-username: ${{ secrets.CYPRESS_USERNAME }}
+          cypress-password: ${{ secrets.CYPRESS_PASSWORD }}
