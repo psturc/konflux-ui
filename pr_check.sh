@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export NODEJS_AGENT_IMAGE=quay.io/konflux-ci/tekton-integration-catalog/sealights-nodejs:latest
+script_path="$(dirname -- "${BASH_SOURCE[0]}")"
 
 build_ui_image() {
     set -euo pipefail
@@ -13,11 +14,10 @@ build_ui_image() {
     export TARGET_BRANCH=${TARGET_BRANCH##*/}
 
     # Update konflux-ui image name and tag in konflux-ci kustomize files
-    yq eval --inplace "del(.images[] | select(.name == \"*konflux-ui*\") | .digest)" konflux-ci/ui/core/kustomization.yaml
-    yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newTag=\"${IMAGE_TAG}\"" konflux-ci/ui/core/kustomization.yaml
-    yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newName=\"${IMAGE_NAME}\"" konflux-ci/ui/core/kustomization.yaml
-
-    cd konflux-ui || exit 1
+    local ui_kustomize_yaml_path="${script_path}/konflux-ci/konflux-ci/ui/core/kustomization.yaml"
+    yq eval --inplace "del(.images[] | select(.name == \"*konflux-ui*\") | .digest)" "${ui_kustomize_yaml_path}"
+    yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newTag=\"${IMAGE_TAG}\"" "${ui_kustomize_yaml_path}"
+    yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newName=\"${IMAGE_NAME}\"" "${ui_kustomize_yaml_path}"
 
     # TODO: change to konflux-ui
     export COMPONENT=nodejs-test
@@ -47,14 +47,10 @@ build_ui_image() {
 
     podman image save -o konflux-ui.tar ${KONFLUX_UI_IMAGE_REF}
     kind load image-archive konflux-ui.tar -n konflux
-
-    cd .. || exit 1
 }
 
 
 run_test() {
-    cd konflux-ui || exit 1
-
     # default image used if test code is not changed in a PR
     TEST_IMAGE="quay.io/konflux_ui_qe/konflux-ui-tests:latest"
 
@@ -126,7 +122,6 @@ run_test() {
 
     echo "Exiting pr_check.sh with code $TEST_RUN"
 
-    cd ..
     exit $TEST_RUN
 }
 

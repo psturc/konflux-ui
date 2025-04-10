@@ -52,6 +52,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: 'konflux-ci/konflux-ci'
+        path: 'konflux-ci'
         ref: 'main'
 
     - name: Disable AppArmor
@@ -63,7 +64,7 @@ runs:
     - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1
       with:
-        config: kind-config.yaml
+        config: ./konflux-ci/kind-config.yaml
         cluster_name: konflux
     
     - name: Show version information
@@ -79,7 +80,7 @@ runs:
 
     - name: Deploying Dependencies
       run: |
-        ./deploy-deps.sh
+        ./konflux-ci/deploy-deps.sh
       shell: bash
 
     - name: List namespaces
@@ -89,21 +90,14 @@ runs:
 
     - name: Wait for the dependencies to be ready
       run: |
-        ./wait-for-all.sh
+        ./konflux-ci/wait-for-all.sh
       shell: bash
 
     - name: WORKAROUND - Reduce CPU/Memory requirements in build pipeline
       run: |
-        sed -i "s|pipelinesascode.tekton.dev/original-prname:.*|pipelinesascode.tekton.dev/original-prname: \"java-quarkus-*\"|g" ./dependencies/kyverno/policy/e2e-reduce-resources.yaml
-        kubectl create -f  ./dependencies/kyverno/policy/e2e-reduce-resources.yaml
+        sed -i "s|pipelinesascode.tekton.dev/original-prname:.*|pipelinesascode.tekton.dev/original-prname: \"java-quarkus-*\"|g" ./konflux-ci/dependencies/kyverno/policy/e2e-reduce-resources.yaml
+        kubectl create -f  ./konflux-ci/dependencies/kyverno/policy/e2e-reduce-resources.yaml
       shell: bash
-
-    # konflux-ui repo is cloned to /home/runner/work/konflux-ui/konflux-ui/konflux-ui
-    - name: Checkout Konflux-UI Repository
-      uses: actions/checkout@v4
-      with:
-        ref: "${{ github.event.pull_request.head.sha }}"
-        path: 'konflux-ui'
 
     - name: Build konflux-ui image
       env:
@@ -117,12 +111,12 @@ runs:
         BASE_REPO_URL: ${{ env.BASE_REPO_URL }}
         JOB_TYPE: ${{ inputs.job-type }}
       run: |
-        ./konflux-ui/pr_check.sh build
+        ./pr_check.sh build
       shell: bash
 
     - name: Deploying Konflux
       run: |
-        ./deploy-konflux.sh
+        ./konflux-ci/deploy-konflux.sh
       shell: bash
 
     - name: List namespaces
@@ -132,7 +126,7 @@ runs:
 
     - name: Deploy test resources
       run: |
-        ./deploy-test-resources.sh
+        ./konflux-ci/deploy-test-resources.sh
       shell: bash
 
     - name: Prepare resources for E2E tests
@@ -145,7 +139,7 @@ runs:
         QUAY_TOKEN: ${{ inputs.quay-token-test }}
         SMEE_CHANNEL: ${{ inputs.smee-url }}
       run: |
-        ./test/e2e/prepare-e2e.sh
+        ./konflux-ci/test/e2e/prepare-e2e.sh
       shell: bash
 
     - name: Run Konflux UI E2E tests
@@ -158,14 +152,14 @@ runs:
         CYPRESS_PASSWORD: ${{ inputs.cypress-password }}
         SEALIGHTS_TOKEN: ${{ inputs.sealights-token }}
       run: | 
-        ./konflux-ui/pr_check.sh test
+        ./pr_check.sh test
       shell: bash
     
     - name: Generate error logs
       if: ${{ !cancelled() }}
       run: |
-        ./generate-err-logs.sh
-        cp -r konflux-ui/artifacts logs
+        ./konflux-ci/generate-err-logs.sh
+        cp -r artifacts logs
       shell: bash
 
     - name: Archive logs
