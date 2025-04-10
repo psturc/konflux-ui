@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - id: pr-check-action
-        uses: ./.github/actions/pr-check
+      - name: Deploy konflux-ci, build konflux-ui image and test
+        id: pr-check-action
+        uses: ./.github/actions/konflux-ui-deploy-test
+        env:
+          TARGET_BRANCH: ${{ github.base_ref }}
+          SOURCE_BRANCH: ${{ github.head_ref }}
+          HEAD_SHA: ${{ github.sha }}
         with:
           job-type: 'periodic'
           hac-test-gh-token: ${{ secrets.HAC_TEST_GH_TOKEN }}
