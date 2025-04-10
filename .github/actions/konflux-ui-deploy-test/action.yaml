@@ -38,13 +38,13 @@ inputs:
 runs:
   using: "composite"  
   steps:
-    # - name: Free Disk Space (Ubuntu)
-    #   uses: jlumbroso/free-disk-space@main
-    #   with:
-    #     # this might remove tools that are actually needed,
-    #     # if set to "true" but frees about 6 GB
-    #     tool-cache: false
-    #     docker-images: false
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: false
+        docker-images: false
 
     # konflux-ci is cloned to /home/runner/work/konflux-ui/konflux-ui
     # as it have to be at home folder to use helm/kind-action@v1 action
