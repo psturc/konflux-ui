@@ -10,6 +10,7 @@ build_ui_image() {
     export IMAGE_NAME=localhost/test/test
     export IMAGE_TAG=konflux-ui
     export KONFLUX_UI_IMAGE_REF=${IMAGE_NAME}:${IMAGE_TAG}
+    export TARGET_BRANCH=${TARGET_BRANCH##*/}
 
     # Update konflux-ui image name and tag in konflux-ci kustomize files
     yq eval --inplace "del(.images[] | select(.name == \"*konflux-ui*\") | .digest)" konflux-ci/ui/core/kustomization.yaml
