@@ -1,0 +1,17 @@
+name: Periodic job - test Konflux UI with Sealights
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: pr-check-action
+        uses: ./.github/actions/pr-check
+        with:
+          job-type: 'periodic'
