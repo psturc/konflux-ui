@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
+const { registerSealightsTasks } = require('sealights-cypress-plugin');
 const { beforeRunHook, afterRunHook } = require('cypress-mochawesome-reporter/lib');
 function deleteLaunchFiles() {
   const getLaunchTempFiles = () => {
@@ -48,7 +49,7 @@ export default defineConfig({
         : 'tests/{advanced-happy-path*,private-basic*,*-private-git-*}',
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
-
+      registerSealightsTasks(on, config);
       const logOptions = {
         outputRoot: `${config.projectRoot}/cypress`,
         outputTarget: {

@@ -22,6 +22,7 @@ build_ui_image() {
     # TODO: change to konflux-ui
     export COMPONENT=nodejs-test
     export AGENT_VERSION
+    export BSID
 
     AGENT_VERSION=$(podman run $NODEJS_AGENT_IMAGE /bin/sh -c 'echo ${AGENT_VERSION}')
 
@@ -39,7 +40,9 @@ build_ui_image() {
 
     echo "$SEALIGHTS_TOKEN" > /tmp/sl-token
 
-    podman build --build-arg BSID="$(< buildSessionId)" \
+    BSID=$(< buildSessionId)
+
+    podman build --build-arg BSID="${BSID}" \
         --build-arg AGENT_VERSION="${AGENT_VERSION}" \
         --secret id=sealights-credentials/token,src=/tmp/sl-token \
         -t ${KONFLUX_UI_IMAGE_REF} \
@@ -84,13 +87,13 @@ run_test() {
         -e CYPRESS_KONFLUX_BASE_URL=https://localhost:9443 \
         -e CYPRESS_USERNAME=${CYPRESS_USERNAME} \
         -e CYPRESS_PASSWORD=${CYPRESS_PASSWORD} \
-        -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN}"
-
-
-    podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-        $NODEJS_AGENT_IMAGE \
-        /bin/bash -cx "slnodejs start --teststage konflux-ui-e2e --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
-
+        -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN} \
+        -e CYPRESS_SL_TOKEN=${SEALIGHTS_TOKEN} \
+        -e CYPRESS_SL_BUILD_SESSION_ID=${BSID} \
+        -e CYPRESS_SL_TEST_STAGE=konflux-ui-e2e \
+        -e CYPRESS_SL_ENABLE_REMOTE_AGENT=true \
+        -e CYPRESS_SL_OPTIMIZE_COVERAGE_COLLECTION=true"
+        
     TEST_RUN=0
     set +e
     podman run --network host ${COMMON_SETUP} ${TEST_IMAGE}
@@ -109,10 +112,6 @@ run_test() {
         esac
         TEST_RUN=1
     fi
-
-    podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-        $NODEJS_AGENT_IMAGE \
-        /bin/bash -cx "slnodejs end --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
 
     kubectl logs "$(kubectl get pods -n konflux-ui -o name | grep proxy)" --all-containers=true -n konflux-ui > "$PWD/artifacts/konflux-ui.log"
 
