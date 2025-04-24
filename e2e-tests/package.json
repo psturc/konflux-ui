@@ -28,5 +28,8 @@
     "otplib": "^12.0.1",
     "prettier": "^3.4.2",
     "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "sealights-cypress-plugin": "^2.0.115"
   }
 }

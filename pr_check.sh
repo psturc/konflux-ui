@@ -61,6 +61,7 @@ build_ui_image() {
 run_test() {
     # default image used if test code is not changed in a PR
     TEST_IMAGE="quay.io/konflux_ui_qe/konflux-ui-tests:latest"
+    BSID=$(< buildSessionId)
 
     # monitor memory usage during a test
     while true; do date '+%F_%H:%M:%S' >> mem.log && free -m >> mem.log; sleep 1; done 2>&1 &
@@ -92,12 +93,10 @@ run_test() {
         -e CYPRESS_KONFLUX_BASE_URL=https://localhost:9443 \
         -e CYPRESS_USERNAME=${CYPRESS_USERNAME} \
         -e CYPRESS_PASSWORD=${CYPRESS_PASSWORD} \
-        -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN}"
-
-    TEST_STAGE_NAME=konflux-ui-e2e
-    podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-        $NODEJS_AGENT_IMAGE \
-        /bin/bash -cx "slnodejs start --teststage ${TEST_STAGE_NAME} --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
+        -e CYPRESS_GH_TOKEN=${CYPRESS_GH_TOKEN} \
+        -e CYPRESS_SL_TOKEN=${SEALIGHTS_TOKEN} \
+        -e CYPRESS_SL_BUILD_SESSION_ID=${BSID} \
+        -e CYPRESS_SL_TEST_STAGE=konflux-ui-e2e"
 
     TEST_RUN=0
     set +e
@@ -117,14 +116,6 @@ run_test() {
         esac
         TEST_RUN=1
     fi
-
-    podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD/artifacts:/artifacts" --workdir /artifacts -e NODE_DEBUG=sl \
-        $NODEJS_AGENT_IMAGE \
-        /bin/bash -cx "slnodejs uploadReports --teststage ${TEST_STAGE_NAME} --buildsessionidfile buildSessionId --reportfile \$(ls *.xml) --token ${SEALIGHTS_TOKEN}"
-
-    podman run --network host --userns=keep-id --group-add keep-groups -v "$PWD:/konflux-ui" --workdir /konflux-ui -e NODE_DEBUG=sl \
-        $NODEJS_AGENT_IMAGE \
-        /bin/bash -cx "slnodejs end --buildsessionidfile buildSessionId --token ${SEALIGHTS_TOKEN}"
 
     kubectl logs "$(kubectl get pods -n konflux-ui -o name | grep proxy)" --all-containers=true -n konflux-ui > "$PWD/artifacts/konflux-ui.log"
 
