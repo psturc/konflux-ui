@@ -19,7 +19,7 @@ build_ui_image() {
     yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newTag=\"${IMAGE_TAG}\"" "${ui_kustomize_yaml_path}"
     yq eval --inplace "(.images[] | select(.name == \"*konflux-ui*\")) |=.newName=\"${IMAGE_NAME}\"" "${ui_kustomize_yaml_path}"
 
-    export COMPONENT=konflux-ui
+    export COMPONENT=nodejs-test
     export AGENT_VERSION
     export BSID
 
