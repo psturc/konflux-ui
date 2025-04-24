@@ -1,4 +1,5 @@
 import { defineConfig } from 'cypress';
+const { registerSealightsTasks } = require('sealights-cypress-plugin');
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 const { beforeRunHook, afterRunHook } = require('cypress-mochawesome-reporter/lib');
@@ -48,6 +49,7 @@ export default defineConfig({
         : 'tests/{advanced-happy-path*,private-basic*,*-private-git-*}',
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
+      registerSealightsTasks(on, config);
 
       const logOptions = {
         outputRoot: `${config.projectRoot}/cypress`,
