@@ -8,7 +8,6 @@ runs:
       run: |
         set -euo pipefail
         : Generate error logs
-        ./konflux-ci/generate-err-logs.sh
         mkdir -p logs
         if [ -d artifacts ]; then cp -r artifacts/* logs/ || true; fi
       shell: bash
