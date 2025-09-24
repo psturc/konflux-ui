@@ -27,7 +27,8 @@ jobs:
       SMEE_URL: ${{ secrets.SMEE_URL }}
       CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
       CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
-      TESTING_CLUSTER_URL: ${{ secrets.TESTING_CLUSTER_URL }}
+      TESTING_CLUSTER_API_URL: ${{ secrets.TESTING_CLUSTER_API_URL }}
+      KONFLUX_UI_URL: ${{ secrets.KONFLUX_UI_URL }}
       TESTING_CLUSTER_PASSWORD: ${{ secrets.TESTING_CLUSTER_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
