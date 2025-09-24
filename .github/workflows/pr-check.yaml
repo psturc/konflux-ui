@@ -41,6 +41,12 @@ jobs:
   
       - name: Konflux-ui e2e test
         uses: ./.github/actions/konflux-ui-e2e-test
+
+      - name: Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
   
       - name: Generate error logs
         if: ${{ always() }}
