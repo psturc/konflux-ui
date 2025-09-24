@@ -30,6 +30,7 @@ jobs:
       TESTING_CLUSTER_API_URL: ${{ secrets.TESTING_CLUSTER_API_URL }}
       KONFLUX_UI_URL: ${{ secrets.KONFLUX_UI_URL }}
       TESTING_CLUSTER_PASSWORD: ${{ secrets.TESTING_CLUSTER_PASSWORD }}
+      KONFLUX_UI_KUBECONFIG: ${{ secrets.KONFLUX_UI_KUBECONFIG }}
     steps:
       - uses: actions/checkout@v4
         with:
