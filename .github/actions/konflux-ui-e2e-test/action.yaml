@@ -9,3 +9,8 @@ runs:
         : Run Konflux UI E2E tests
         ./pr_check.sh test
       shell: bash
+    - name: Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
