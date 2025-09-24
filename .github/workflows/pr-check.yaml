@@ -32,6 +32,7 @@ jobs:
       TESTING_CLUSTER_PASSWORD: ${{ secrets.TESTING_CLUSTER_PASSWORD }}
       KONFLUX_UI_KUBECONFIG: ${{ secrets.KONFLUX_UI_KUBECONFIG }}
       GH_USERNAME: ${{ secrets.GH_USERNAME }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
