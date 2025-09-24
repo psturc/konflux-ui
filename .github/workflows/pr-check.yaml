@@ -31,6 +31,7 @@ jobs:
       KONFLUX_UI_URL: ${{ secrets.KONFLUX_UI_URL }}
       TESTING_CLUSTER_PASSWORD: ${{ secrets.TESTING_CLUSTER_PASSWORD }}
       KONFLUX_UI_KUBECONFIG: ${{ secrets.KONFLUX_UI_KUBECONFIG }}
+      GH_USERNAME: ${{ secrets.GH_USERNAME }}
     steps:
       - uses: actions/checkout@v4
         with:
