@@ -37,6 +37,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = React.memo(({ chi
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('Error while Authenticating the user', err);
+        // eslint-disable-next-line no-console
+        console.log('test');
       }
     };
     void checkAuthStatus();
