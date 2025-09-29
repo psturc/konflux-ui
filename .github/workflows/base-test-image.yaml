@@ -15,7 +15,6 @@ jobs:
           QUAY_ORG: ${{ secrets.QUAY_TEST_ORG }}
           QUAY_TOKEN: ${{ secrets.QUAY_TOKEN_TEST }}
         run: |
-          cd e2e-tests
           podman login -u="$QUAY_ORG" -p="$QUAY_TOKEN" quay.io
           podman build -t "quay.io/psturc/konflux-ui:${{ github.sha }}" -f Dockerfile.e2e-coverage
           podman push "quay.io/psturc/konflux-ui:${{ github.sha }}"
