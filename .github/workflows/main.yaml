@@ -2,10 +2,11 @@ name: UI Lint & Unit Tests
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on pull request events but only for the main branch
+  # Triggers the workflow on pull request events for any branch
   pull_request:
     branches:
       - main
+      - open-source-coverage-base
   merge_group:
     types: [checks_requested]
 
@@ -57,3 +58,6 @@ jobs:
           name: unit-test-coverage
           verbose: true
           fail_ci_if_error: true
+          override_branch: ${{ github.event.pull_request.head.ref }}
+          override_commit: ${{ github.event.pull_request.head.sha }}
+          override_pr: ${{ github.event.pull_request.number }}

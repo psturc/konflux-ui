@@ -12,24 +12,18 @@ coverage:
         threshold: 1%
     patch:
       default:
-        informational: true
+        informational: false       # Make patch coverage blocking to show in comments
         target: 80%
-flags:
-  unittests:
-    target: auto
-    threshold: 1%
-  e2e:
-    target: auto
-    threshold: 1%
-    informational: true
+        threshold: 50%             # Allow some flexibility
 
 ignore:
   - "**/*__data__*/*.ts"
 
 comment:
   layout: "reach,diff,flags,tree,footer"
-  behavior: default
+  behavior: new              # Update existing comments instead of creating new ones
   require_changes: false
-  require_base: false        # Allow comments on PRs without base coverage
+  require_base: true         # Require base coverage for proper comparison
   require_head: true         # Require head coverage to post comment
-  after_n_builds: 2          # Wait for both unit tests and e2e coverage
+  after_n_builds: 1          # Only wait for one build since unit tests might not run on every PR
+  
