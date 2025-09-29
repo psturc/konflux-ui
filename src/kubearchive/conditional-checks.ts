@@ -8,6 +8,8 @@ export const checkIfKubeArchiveIsEnabled = async () => {
     await commonFetch('/livez', { pathPrefix: KUBEARCHIVE_PATH_PREFIX });
     return true;
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('no e2e coverage');
     return false;
   }
 };
