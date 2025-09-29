@@ -51,6 +51,9 @@ jobs:
           name: e2e-coverage
           verbose: true
           fail_ci_if_error: false
+          override_branch: ${{ github.event.pull_request.head.ref }}
+          override_commit: ${{ github.event.pull_request.head.sha }}
+          override_pr: ${{ github.event.pull_request.number }}
   
       - name: Generate error logs
         if: ${{ always() }}
