@@ -12,6 +12,8 @@ export const checkIfKubeArchiveIsEnabled = async () => {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log('no e2e coverage');
+    // eslint-disable-next-line no-console
+    console.log('no e2e coverage again');
     return false;
   }
 };
