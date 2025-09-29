@@ -17,5 +17,5 @@ jobs:
         run: |
           cd e2e-tests
           podman login -u="$QUAY_ORG" -p="$QUAY_TOKEN" quay.io
-          podman build -t quay.io/konflux_ui_qe/konflux-ui-tests-base:latest -f BaseContainerfile
-          podman push quay.io/konflux_ui_qe/konflux-ui-tests-base:latest
+          podman build -t "quay.io/psturc/konflux-ui:${{ github.sha }}" -f Dockerfile.e2e-coverage
+          podman push "quay.io/psturc/konflux-ui:${{ github.sha }}"
