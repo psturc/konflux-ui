@@ -42,11 +42,15 @@ jobs:
       - name: Konflux-ui e2e test
         uses: ./.github/actions/konflux-ui-e2e-test
 
-      - name: Codecov
+      - name: Upload E2E coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./artifacts/coverage/lcov.info
+          flags: e2e
+          name: e2e-coverage
           verbose: true
+          fail_ci_if_error: false
   
       - name: Generate error logs
         if: ${{ always() }}

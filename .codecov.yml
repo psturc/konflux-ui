@@ -14,11 +14,22 @@ coverage:
       default:
         informational: true
         target: 80%
+flags:
+  unittests:
+    target: auto
+    threshold: 1%
+  e2e:
+    target: auto
+    threshold: 1%
+    informational: true
 
 ignore:
   - "**/*__data__*/*.ts"
 
 comment:
-  layout: "reach,diff,flags,files,footer"
+  layout: "reach,diff,flags,tree,footer"
   behavior: default
   require_changes: false
+  require_base: false        # Allow comments on PRs without base coverage
+  require_head: true         # Require head coverage to post comment
+  after_n_builds: 2          # Wait for both unit tests and e2e coverage
