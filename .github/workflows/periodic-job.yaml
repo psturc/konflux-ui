@@ -9,24 +9,39 @@ on:
 jobs:
   e2e-test:
     runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.ref_name }}
+      HEAD_SHA: ${{ github.sha }}
+      # secrets
+      CYPRESS_GH_TOKEN: ${{ secrets.HAC_TEST_GH_TOKEN }}
+      HAC_TEST_GH_TOKEN: ${{ secrets.HAC_TEST_GH_TOKEN }}
+      SEALIGHTS_TOKEN: ${{ secrets.SEALIGHTS_TOKEN }}
+      GH_APP_ID: ${{ secrets.GH_APP_ID }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      GH_APP_WEBHOOK_SECRET: ${{ secrets.GH_APP_WEBHOOK_SECRET }}
+      QUAY_TEST_ORG: ${{ secrets.QUAY_TEST_ORG }}
+      QUAY_TOKEN_TEST: ${{ secrets.QUAY_TOKEN_TEST }}
+      SMEE_URL: ${{ secrets.SMEE_URL }}
+      CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+      CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+      TESTING_CLUSTER_API_URL: ${{ secrets.TESTING_CLUSTER_API_URL }}
+      KONFLUX_UI_URL: ${{ secrets.KONFLUX_UI_URL }}
+      TESTING_CLUSTER_PASSWORD: ${{ secrets.TESTING_CLUSTER_PASSWORD }}
+      KONFLUX_UI_KUBECONFIG: ${{ secrets.KONFLUX_UI_KUBECONFIG }}
+      GH_USERNAME: ${{ secrets.GH_USERNAME }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy konflux-ci, build konflux-ui image and test
-        id: pr-check-action
-        uses: ./.github/actions/konflux-ui-deploy-test
-        env:
-          TARGET_BRANCH: ${{ github.ref_name }}
-          HEAD_SHA: ${{ github.sha }}
-          # secrets
-          HAC_TEST_GH_TOKEN: ${{ secrets.HAC_TEST_GH_TOKEN }}
-          SEALIGHTS_TOKEN: ${{ secrets.SEALIGHTS_TOKEN }}
-          GH_APP_ID: ${{ secrets.GH_APP_ID }}
-          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
-          GH_APP_WEBHOOK_SECRET: ${{ secrets.GH_APP_WEBHOOK_SECRET }}
-          QUAY_TEST_ORG: ${{ secrets.QUAY_TEST_ORG }}
-          QUAY_TOKEN_TEST: ${{ secrets.QUAY_TOKEN_TEST }}
-          SMEE_URL: ${{ secrets.SMEE_URL }}
-          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
-          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+      - name: Konflux-ui e2e test
+        uses: ./.github/actions/konflux-ui-e2e-test
+      - name: Upload E2E coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          job-type: 'periodic'
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./artifacts/coverage/lcov.info
+          flags: e2e
+          name: e2e-coverage
+  
+      - name: Generate error logs
+        if: ${{ always() }}
+        uses: ./.github/actions/generate-error-logs
