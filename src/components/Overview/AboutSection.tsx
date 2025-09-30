@@ -22,7 +22,7 @@ const AboutSection: React.FC<React.PropsWithChildren<unknown>> = () => (
             <CardTitle>Build</CardTitle>
             <CardBody>
               Build artifacts of all kinds from source. Enable hermetic builds and produce accurate
-              SBOMs.
+              SBOMs. Test.
             </CardBody>
           </Card>
           <Card isPlain isCompact>

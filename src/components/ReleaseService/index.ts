@@ -19,6 +19,8 @@ export const releasePlanListLoader = createLoaderWithAccessCheck(
 export const releasePlanAdmissionListLoader = createLoaderWithAccessCheck(
   async () => {
     const ns = getLastUsedNamespace();
+    // eslint-disable-next-line no-console
+    console.log('test');
     return K8sQueryListResourceItems({
       model: ReleasePlanAdmissionModel,
       queryOptions: { ns },
